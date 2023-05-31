@@ -35,7 +35,7 @@ int round = 1;
 
          if (!isInRange)
          {
-             Console.WriteLine($"The number you put in is either not a valid number or is not in range. Please input a valid integer between {start} and {end}");
+             Console.WriteLine($"The number you put in is either not a valid number or is not in range. Please input a valid integer between {start} and {end}.");
          }
      }
 
