@@ -27,7 +27,7 @@
  *Enter desired cannon range: 50
  *That round OVERSHOT the target.
  *
- * We to take in the user's guess, compare it to the position and if higher or lower we report back.
+ * We need to take in the user's guess, compare it to the position and if higher or lower we report back.
  * We also need to up the damage the manticore does each round.
 */
 
@@ -36,8 +36,10 @@ int cityHealth = 15;
 int cityHealthCurrent = 15;
  
 int manticoreHealth = 10;
-int manticoreHealthCurret = 10;
-int round = 1;
+int manticoreHealthCurrent = 10;
+int round = 0;
+
+
 
 //Our input function to make sure we're getting numbers back and they are in range.
  static int ParseIntInputInRange(string prompt, int start, int end)
@@ -63,43 +65,92 @@ int round = 1;
              Console.WriteLine($"The number you put in is either not a valid number or is not in range. Please input a valid integer between {start} and {end}.");
          }
      }
-    Console.Clear();
+    
      return userInput;
  }
- 
- int playerOneInput;
- playerOneInput = ParseIntInputInRange("Please input a number between 1 and 100 for position of the Manticore.", 1,100 );
+
+int playerOneInput = ParseIntInputInRange("Please input a number between 1 and 100 for the position of the Manticore.", 1,100 );
+Console.Clear();
+
 
 
 //Create a function that causes damage based on if it's a multi of 3, 5, or 3 and 5.
 //We need to figure out if the guess is correct, too far or too short.
-static void AccuofGuess(int mantiloc, int userGuess)
+static string AccofGuess(int mantiloc, int userGuess)
 {
+    string accuracy = "";
     if (mantiloc > userGuess)
     {
-        Console.WriteLine("That round OVERSHOT the target!");
+        accuracy = "That round OVERSHOT the target!";
     }
     else if (mantiloc < userGuess)
     {
-        Console.WriteLine("That round fell SHORT of the target.");
+        accuracy = "That round fell SHORT of the target!";
     }
     else
     {
-        Console.WriteLine("That was a DIRECT HIT!");
-        
+        accuracy = "That was a DIRECT HIT!";
+
+    }
+
+    return accuracy;
+}
+
+int RoundDamage(int currentRound)
+{
+    int damageAmount = 1;
+
+    if (currentRound == currentRound % 3 || currentRound == currentRound % 5)
+    {
+        damageAmount = 3;
+    }
+    else if (currentRound == currentRound % 3 && currentRound == currentRound % 5)
+    {
+        damageAmount = 10;
+    }
+    else damageAmount = 1;
+    
+    return damageAmount;
+}
+
+int doDamage(int target, int currentR)
+{
+    if (target == cityHealth)
+    {
+        return cityHealthCurrent--;
+    }
+
+    if (target == manticoreHealth)
+    {
+        int damage = RoundDamage(currentR);
+        return manticoreHealthCurrent - damage;
+    }
+    else
+    {
+        return 0;
     }
 }
+
     
-static string Status(int round, int cdamage, int mdamage)
+void Status(int cRound, int cCityHealth, int cMantiHealth)
 {
+    Console.WriteLine($"Round:{cRound}");
+    Console.WriteLine($"City:{cCityHealth}");
+    Console.WriteLine($"Manticore:{cMantiHealth}");
     
+
 }
 
 void gameLoop()
 {
-    while (cityHealthCurrent > 0 || manticoreHealthCurret > 0)
+    while (cityHealthCurrent > 0 || manticoreHealthCurrent > 0)
     {
-        
+        int playerTwoInput = ParseIntInputInRange("Tell the defenses where to aim, pick a number between 1 and 100.", 1, 100);
+        string result = AccofGuess(playerOneInput, playerTwoInput);
+        doDamage()
+        Status(round, cityHealthCurrent, manticoreHealthCurrent);
+        Console.WriteLine(result);
+        round++;
     }
 }
 
