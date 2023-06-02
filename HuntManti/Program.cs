@@ -32,12 +32,12 @@
 */
 
 
-int cityHealth = 15; 
-int cityHealthCurrent = 15;
+const int city = 15; 
+int cityHealthCurrent = city;
  
-int manticoreHealth = 10;
-int manticoreHealthCurrent = 10;
-int round = 0;
+const int manticore = 10;
+int manticoreHealthCurrent = manticore;
+int round = 1;
 
 
 
@@ -72,23 +72,48 @@ int round = 0;
 int playerOneInput = ParseIntInputInRange("Please input a number between 1 and 100 for the position of the Manticore.", 1,100 );
 Console.Clear();
 
+void DoDamage(int target, int currentR)
+{
+    if (target == city)
+    {
+        cityHealthCurrent--;
+    }
 
+    if (cityHealthCurrent < 0)
+    {
+        cityHealthCurrent = 0;
+    }
+
+    if (target == manticore)
+    {
+        int damage = RoundDamage(currentR);
+        manticoreHealthCurrent -= damage;
+    }
+
+    if (manticoreHealthCurrent < 0)
+    {
+        manticoreHealthCurrent = 0;
+    }
+}
 
 //Create a function that causes damage based on if it's a multi of 3, 5, or 3 and 5.
 //We need to figure out if the guess is correct, too far or too short.
-static string AccofGuess(int mantiloc, int userGuess)
+string AccofGuess(int mantiloc, int userGuess)
 {
-    string accuracy = "";
-    if (mantiloc > userGuess)
+    string accuracy;
+    if (mantiloc < userGuess)
     {
+        DoDamage(city, round);
         accuracy = "That round OVERSHOT the target!";
     }
-    else if (mantiloc < userGuess)
+    else if (mantiloc > userGuess)
     {
+        DoDamage(city, round);
         accuracy = "That round fell SHORT of the target!";
     }
     else
     {
+        DoDamage(manticore, round);
         accuracy = "That was a DIRECT HIT!";
 
     }
@@ -98,7 +123,7 @@ static string AccofGuess(int mantiloc, int userGuess)
 
 int RoundDamage(int currentRound)
 {
-    int damageAmount = 1;
+    int damageAmount;
 
     if (currentRound == currentRound % 3 || currentRound == currentRound % 5)
     {
@@ -109,50 +134,40 @@ int RoundDamage(int currentRound)
         damageAmount = 10;
     }
     else damageAmount = 1;
-    
     return damageAmount;
 }
 
-int doDamage(int target, int currentR)
-{
-    if (target == cityHealth)
-    {
-        return cityHealthCurrent--;
-    }
 
-    if (target == manticoreHealth)
-    {
-        int damage = RoundDamage(currentR);
-        return manticoreHealthCurrent - damage;
-    }
-    else
-    {
-        return 0;
-    }
-}
 
     
 void Status(int cRound, int cCityHealth, int cMantiHealth)
 {
     Console.WriteLine($"Round:{cRound}");
-    Console.WriteLine($"City:{cCityHealth}");
-    Console.WriteLine($"Manticore:{cMantiHealth}");
+    Console.WriteLine($"City:{cCityHealth} \\ {city}");
+    Console.WriteLine($"Manticore:{cMantiHealth} \\ {manticore}");
     
 
 }
 
-void gameLoop()
+void GameLoop()
 {
-    while (cityHealthCurrent > 0 || manticoreHealthCurrent > 0)
+    bool play = true;
+    //Not ending the loop when health reaches zero. Not sure why. 
+    while (play)
     {
         int playerTwoInput = ParseIntInputInRange("Tell the defenses where to aim, pick a number between 1 and 100.", 1, 100);
         string result = AccofGuess(playerOneInput, playerTwoInput);
-        doDamage()
         Status(round, cityHealthCurrent, manticoreHealthCurrent);
         Console.WriteLine(result);
         round++;
+        if (cityHealthCurrent == 0 || manticoreHealthCurrent == 0)
+        {
+            play = false;
+        }
     }
 }
+
+GameLoop();
 
 
      
