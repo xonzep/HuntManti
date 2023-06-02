@@ -125,15 +125,16 @@ int RoundDamage(int currentRound)
 {
     int damageAmount;
 
-    if (currentRound == currentRound % 3 || currentRound == currentRound % 5)
+    if (currentRound % 3 == 0 || currentRound % 5 == 0)
     {
         damageAmount = 3;
     }
-    else if (currentRound == currentRound % 3 && currentRound == currentRound % 5)
+    else if (currentRound % 3 == 0 && currentRound % 5 == 0)
     {
         damageAmount = 10;
     }
     else damageAmount = 1;
+    
     return damageAmount;
 }
 
@@ -142,9 +143,10 @@ int RoundDamage(int currentRound)
     
 void Status(int cRound, int cCityHealth, int cMantiHealth)
 {
-    Console.WriteLine($"Round:{cRound}");
-    Console.WriteLine($"City:{cCityHealth} \\ {city}");
-    Console.WriteLine($"Manticore:{cMantiHealth} \\ {manticore}");
+    int cannonDamage = RoundDamage(round);
+    Console.WriteLine($"Round: {cRound} City: {cCityHealth}\\{city} Manticore: {cMantiHealth}\\{manticore}");
+    Console.WriteLine($"The cannon is expected to do {cannonDamage}");
+    
     
 
 }
@@ -152,17 +154,30 @@ void Status(int cRound, int cCityHealth, int cMantiHealth)
 void GameLoop()
 {
     bool play = true;
-    //Not ending the loop when health reaches zero. Not sure why. 
+    //Not ending the loop when health reaches zero. Not sure why. Added bool, that now works.
     while (play)
     {
         int playerTwoInput = ParseIntInputInRange("Tell the defenses where to aim, pick a number between 1 and 100.", 1, 100);
         string result = AccofGuess(playerOneInput, playerTwoInput);
         Status(round, cityHealthCurrent, manticoreHealthCurrent);
+        Console.WriteLine();
         Console.WriteLine(result);
         round++;
-        if (cityHealthCurrent == 0 || manticoreHealthCurrent == 0)
+        if (manticoreHealthCurrent == 0)
         {
             play = false;
+            Console.WriteLine();
+            Console.WriteLine("The Manticore has been destroyed! The city has been saved!");
+        }
+        else if(cityHealthCurrent == 0)
+        {
+            play = false;
+            Console.WriteLine();
+            Console.WriteLine("The city has been destroyed! The Manticore is victorious!");
+        }
+        else
+        {
+            play = true;
         }
     }
 }
